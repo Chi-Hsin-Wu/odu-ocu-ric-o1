@@ -1,0 +1,44 @@
+version: '3.2'
+
+services:
+  du:
+    hostname: odu
+    container_name: odu1
+    build:
+      context: .
+      args:
+        - RIC_HOST=${RIC_HOST}
+    command: >
+             sh -c "cd /root/o-du-l2/build/scripts ; ./load_yang.sh ; ./netopeer-server.sh start ; /bin/bash"
+    networks:
+      ran01:
+        ipv4_address: 10.6.1.2
+    tty: true
+    stdin_open: true
+    privileged: true
+
+
+
+  cu:
+    hostname: custub
+    container_name: cu_stub01
+    build: 
+      context: .
+      args:
+        - RIC_HOST=${RIC_HOST}
+    command: >
+      sh -c "cd /root/o-du-l2/build/scripts ; ./load_yang.sh ; ./netopeer-server.sh start ; /bin/bash"
+    networks:
+      ran01:
+        ipv4_address: 10.6.1.3
+    tty: true
+    stdin_open: true
+    privileged: true
+
+networks:
+  ran01:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.6.1.0/24
